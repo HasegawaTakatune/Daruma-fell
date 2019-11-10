@@ -3,22 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CommonValues : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+{    
 }
 
 /// <summary>
-/// 
+/// ライト
 /// </summary>
 public enum LIGHT
 {
@@ -44,7 +33,7 @@ public enum LIGHT
 }
 
 /// <summary>
-/// 
+/// 幽霊のモード
 /// </summary>
 public enum GHOST_MODE
 {
@@ -66,6 +55,15 @@ public enum GHOST_MODE
     /// <summary>
     /// 反則　振り向かなかった
     /// </summary>
-    FOUL_NOT_TURN_AROUND
+    FOUL_NOT_TURN_AROUND,
 
+    /// <summary>
+    /// ゲームエンド
+    /// </summary>
+    GAME_END,
+
+    /// <summary>
+    /// Length
+    /// </summary>
+    LENGTH
 }
