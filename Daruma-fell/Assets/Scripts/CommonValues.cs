@@ -6,6 +6,15 @@ public class CommonValues : MonoBehaviour
 {    
 }
 
+public enum GAMESTATE
+{
+    MENU = 0,
+    START,
+    PLAYING,
+    END,
+    LENGTH
+}
+
 /// <summary>
 /// ライト
 /// </summary>

@@ -108,8 +108,7 @@ public class Ghost : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if (mode == GHOST_MODE.MOVE || mode == GHOST_MODE.STOP)
-            other.gameObject.GetComponent<FluorescentLight>().ChangeType(LIGHT.FLASHING);
+        other.gameObject.GetComponent<FluorescentLight>().ChangeType(LIGHT.FLASHING);
     }
 
     /// <summary>
@@ -118,8 +117,7 @@ public class Ghost : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
-        if (mode == GHOST_MODE.MOVE || mode == GHOST_MODE.STOP)
-            other.gameObject.GetComponent<FluorescentLight>().ChangeType(LIGHT.LIGHT_UP);
+        other.gameObject.GetComponent<FluorescentLight>().ChangeType(LIGHT.OFF);
     }
 
     /// <summary>
@@ -127,7 +125,6 @@ public class Ghost : MonoBehaviour
     /// </summary>
     private void OnBecameVisible()
     {
-        Debug.Log("視界内");
         Looked = true;
     }
 
@@ -136,7 +133,6 @@ public class Ghost : MonoBehaviour
     /// </summary>
     private void OnBecameInvisible()
     {
-        Debug.Log("視界外");
         Looked = false;
     }
 
@@ -146,19 +142,18 @@ public class Ghost : MonoBehaviour
     /// <returns></returns>
     private IEnumerator Move()
     {
-        Debug.Log("移動中");
-        //StartCoroutine(Judgment());
+        StartCoroutine(Judgment());
 
-        // 幽霊の掛け声の時間を取得・掛け声を発生
-        float limit = 3.0f;//audioSource.clip.length;
+        // 幽霊の掛け声を発生        
         audioSource.Play();
 
+        Vector3 vec = front * speed;
+
         // 掛け声を発している間、ターゲットに近づく
-        while (mode == GHOST_MODE.MOVE && limit > 0)
+        while (mode == GHOST_MODE.MOVE && audioSource.isPlaying)
         {
             yield return new WaitForSeconds(Time.deltaTime);
-            trans.position += front * speed;
-            limit -= Time.deltaTime;
+            trans.position += vec;
         }
 
         ChangeMode(GHOST_MODE.STOP);
@@ -169,8 +164,7 @@ public class Ghost : MonoBehaviour
     /// </summary>    
     private IEnumerator Stop()
     {
-        Debug.Log("停止中");
-        //StartCoroutine(Judgment());
+        StartCoroutine(Judgment());
 
         float interval = Random.Range(Min, Max);
         yield return new WaitForSeconds(interval);
@@ -182,6 +176,7 @@ public class Ghost : MonoBehaviour
     /// </summary>
     private IEnumerator TurnedAround()
     {
+        Debug.Log("掛け声の途中で振り返った");
         yield return new WaitForSeconds(Time.deltaTime);
         trans.position = target.position - target.forward;
 
@@ -193,6 +188,7 @@ public class Ghost : MonoBehaviour
     /// </summary>
     private IEnumerator NotTurnAround()
     {
+        Debug.Log("掛け声を言い終わっても振り返らない");
         yield return new WaitForSeconds(Time.deltaTime);
         trans.position = target.position - target.forward;
 

@@ -1,7 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private Image selectedIcon;
+
     /// <summary>
     /// 垂直ローテーション
     /// </summary>
@@ -33,5 +37,23 @@ public class Player : MonoBehaviour
         verRot.transform.Rotate(0, xRotation, 0);
         horRot.transform.Rotate(-yRotation, 0, 0);
 #endif 
+    }
+
+    public IEnumerator Selected()
+    {
+        while (true)
+        {
+            yield return null;
+
+            if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, Mathf.Infinity))
+            {
+                Debug.DrawRay(transform.position, transform.forward * hit.distance, Color.yellow);
+                selectedIcon.fillAmount += Time.deltaTime;
+            }
+            else
+            {
+                selectedIcon.fillAmount = 0;
+            }
+        }
     }
 }
