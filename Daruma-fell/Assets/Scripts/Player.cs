@@ -6,6 +6,10 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private Image selectedIcon;
 
+    [SerializeField] private Image fade;
+
+    [SerializeField] private LayerMask mask;
+
     /// <summary>
     /// 垂直ローテーション
     /// </summary>
@@ -19,7 +23,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 初期化
     /// </summary>
-    void Start()
+    private void Start()
     {
         verRot = transform.parent;
         horRot = GetComponent<Transform>();
@@ -28,7 +32,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// メインループ
     /// </summary>
-    void Update()
+    private void Update()
     {
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN
         float xRotation = Input.GetAxis("Mouse X");
@@ -39,21 +43,53 @@ public class Player : MonoBehaviour
 #endif 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public IEnumerator Selected()
     {
         while (true)
         {
             yield return null;
 
-            if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, Mathf.Infinity))
+            if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, Mathf.Infinity, mask))
             {
-                Debug.DrawRay(transform.position, transform.forward * hit.distance, Color.yellow);
                 selectedIcon.fillAmount += Time.deltaTime;
+                if (selectedIcon.fillAmount >= 1) break;
             }
             else
             {
                 selectedIcon.fillAmount = 0;
             }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator FadeIn()
+    {
+        Color fadeIn = new Color(0, 0, 0, -Time.deltaTime);
+        while (fade.color.a > 0)
+        {
+            yield return new WaitForSeconds(Time.deltaTime);
+            fade.color += fadeIn;
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator FadeOut()
+    {
+        Color fadeOut = new Color(0, 0, 0, Time.deltaTime);
+        while (fade.color.a < 1)
+        {
+            yield return new WaitForSeconds(Time.deltaTime);
+            fade.color += fadeOut;
         }
     }
 }

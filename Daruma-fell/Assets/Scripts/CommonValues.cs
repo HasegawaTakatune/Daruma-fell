@@ -6,10 +6,9 @@ public class CommonValues : MonoBehaviour
 {    
 }
 
-public enum GAMESTATE
+public enum GAME_STATE
 {
     MENU = 0,
-    START,
     PLAYING,
     END,
     LENGTH
@@ -67,9 +66,9 @@ public enum GHOST_MODE
     FOUL_NOT_TURN_AROUND,
 
     /// <summary>
-    /// ゲームエンド
+    /// 機能しない
     /// </summary>
-    GAME_END,
+    NO_FUNCTION,
 
     /// <summary>
     /// Length

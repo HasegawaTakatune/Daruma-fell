@@ -5,48 +5,84 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    private GAMESTATE state = GAMESTATE.MENU;
+    /// <summary>
+    /// 
+    /// </summary>
+    private GAME_STATE state = GAME_STATE.MENU;
 
+    /// <summary>
+    /// 
+    /// </summary>
     [SerializeField] private GameObject startUI;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    [SerializeField] private GameObject endUI;
+
+    /// <summary>
+    /// 
+    /// </summary>
     [SerializeField] private Player player;
 
-   
+    /// <summary>
+    /// 
+    /// </summary>
+    [SerializeField] private Ghost ghost;
 
-    public void ChangeStatus(GAMESTATE value)
+    private string[] message = { "", "" }; 
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    public void ChangeStatus(GAME_STATE value)
     {
         state = value;
 
         switch (state)
         {
-            case GAMESTATE.MENU:Menu(); break;
-            case GAMESTATE.START: break;
-            case GAMESTATE.PLAYING: break;
-            case GAMESTATE.END: break;
+            case GAME_STATE.MENU: StartCoroutine(Menu()); break;
+            case GAME_STATE.PLAYING: break;
+            case GAME_STATE.END: break;
             default: break;
         }
     }
 
-    private IEnumerator  Menu()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator Menu()
     {
-        Coroutine coroutine;
         startUI.SetActive(true);
-        coroutine = StartCoroutine(player.Selected());
+
+        yield return StartCoroutine(player.FadeIn());
+
+        yield return StartCoroutine(player.Selected());
+
+        startUI.SetActive(false);
+        ghost.ChangeMode(GHOST_MODE.MOVE);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator End()
+    {
+        endUI.SetActive(true);
+        Coroutine coroutine = StartCoroutine(player.Selected());
 
         yield return coroutine;
     }
 
-    
-
-
-    void Start()
+    /// <summary>
+    /// 
+    /// </summary>
+    private void Start()
     {
-
-    }
-
-    void Update()
-    {
-
+        ChangeStatus(GAME_STATE.MENU);
     }
 
 

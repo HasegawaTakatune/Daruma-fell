@@ -10,7 +10,7 @@ public class Ghost : MonoBehaviour
     /// <summary>
     /// モード
     /// </summary>
-    private GHOST_MODE mode = GHOST_MODE.GAME_END;
+    private GHOST_MODE mode = GHOST_MODE.NO_FUNCTION;
 
     /// <summary>
     /// モード変更
@@ -94,9 +94,9 @@ public class Ghost : MonoBehaviour
     /// <summary>
     /// スタートイベント
     /// </summary>
-    void Start()
+    private void Start()
     {
-        ChangeMode(GHOST_MODE.MOVE);
+        ChangeMode(GHOST_MODE.NO_FUNCTION);
         trans = transform;
         trans.LookAt(target);
         front = trans.forward * Time.deltaTime;
