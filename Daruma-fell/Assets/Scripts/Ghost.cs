@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -11,6 +10,7 @@ public class Ghost : MonoBehaviour
     /// モード
     /// </summary>
     private GHOST_MODE mode = GHOST_MODE.NO_FUNCTION;
+    public GHOST_MODE GetMode { get { return mode; } }
 
     /// <summary>
     /// モード変更
@@ -26,6 +26,7 @@ public class Ghost : MonoBehaviour
         {
             case GHOST_MODE.MOVE: StartCoroutine(Move()); break;
             case GHOST_MODE.STOP: StartCoroutine(Stop()); break;
+            case GHOST_MODE.GAME_SET: GameSet(); break;
             case GHOST_MODE.FOUL_TURNED_AROUND: StartCoroutine(TurnedAround()); break;
             case GHOST_MODE.FOUL_NOT_TURN_AROUND: StartCoroutine(NotTurnAround()); break;
             default: break;
@@ -108,7 +109,8 @@ public class Ghost : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        other.gameObject.GetComponent<FluorescentLight>().ChangeType(LIGHT.FLASHING);
+        if (mode == GHOST_MODE.MOVE || mode == GHOST_MODE.STOP)
+            other.gameObject.GetComponent<FluorescentLight>().ChangeType(LIGHT.FLASHING);
     }
 
     /// <summary>
@@ -117,7 +119,7 @@ public class Ghost : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
-        other.gameObject.GetComponent<FluorescentLight>().ChangeType(LIGHT.OFF);
+            other.gameObject.GetComponent<FluorescentLight>().ChangeType(LIGHT.OFF);
     }
 
     /// <summary>
@@ -156,6 +158,7 @@ public class Ghost : MonoBehaviour
             trans.position += vec;
         }
 
+        // 一時停止する
         ChangeMode(GHOST_MODE.STOP);
     }
 
@@ -164,11 +167,21 @@ public class Ghost : MonoBehaviour
     /// </summary>    
     private IEnumerator Stop()
     {
+        // ルール判定
         StartCoroutine(Judgment());
 
+        // 一定時間停止する
         float interval = Random.Range(Min, Max);
         yield return new WaitForSeconds(interval);
         ChangeMode(GHOST_MODE.MOVE);
+    }
+
+    /// <summary>
+    /// ゲームセット
+    /// </summary>
+    private void GameSet()
+    {
+
     }
 
     /// <summary>
@@ -176,11 +189,24 @@ public class Ghost : MonoBehaviour
     /// </summary>
     private IEnumerator TurnedAround()
     {
-        Debug.Log("掛け声の途中で振り返った");
-        yield return new WaitForSeconds(Time.deltaTime);
-        trans.position = target.position - target.forward;
+        audioSource.Stop();
+        trans.position = target.position + target.forward;
+        for (int i = 0; i < 6; i++)
+        {
+            lights[i].ChangeType(LIGHT.OFF);
+            yield return new WaitForSeconds(0.5f);
+        }
 
         audioSource.Play();
+
+        while (audioSource.isPlaying)
+        {
+            trans.position = target.position + target.forward;
+            yield return null;
+        }
+
+        ChangeMode(GHOST_MODE.FOUL);
+        lights[6].ChangeType(LIGHT.LIGHT_UP);
     }
 
     /// <summary>
@@ -188,11 +214,24 @@ public class Ghost : MonoBehaviour
     /// </summary>
     private IEnumerator NotTurnAround()
     {
-        Debug.Log("掛け声を言い終わっても振り返らない");
-        yield return new WaitForSeconds(Time.deltaTime);
-        trans.position = target.position - target.forward;
+        audioSource.Stop();
+        trans.position = target.position + target.forward;
+        yield return new WaitForSeconds(1.0f);
+        for (int i = 0; i < lights.Length; i++)
+            lights[i].ChangeType(LIGHT.OFF);
+
+        yield return new WaitForSeconds(1.0f);
 
         audioSource.Play();
+
+        while (audioSource.isPlaying)
+        {
+            trans.position = target.position + target.forward;
+            yield return null;
+        }
+
+        ChangeMode(GHOST_MODE.FOUL);
+        lights[6].ChangeType(LIGHT.LIGHT_UP);
     }
 
     /// <summary>

@@ -1,16 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class CommonValues : MonoBehaviour
-{    
-}
-
+﻿
+/// <summary>
+/// ゲームステータス
+/// </summary>
 public enum GAME_STATE
 {
+    /// <summary>
+    /// メニュー
+    /// </summary>
     MENU = 0,
+
+    /// <summary>
+    /// プレイング
+    /// </summary>
     PLAYING,
+
+    /// <summary>
+    /// ゲームエンド
+    /// </summary>
     END,
+
+    /// <summary>
+    /// Length
+    /// </summary>
     LENGTH
 }
 
@@ -66,9 +77,19 @@ public enum GHOST_MODE
     FOUL_NOT_TURN_AROUND,
 
     /// <summary>
+    /// 反則
+    /// </summary>
+    FOUL,
+
+    /// <summary>
     /// 機能しない
     /// </summary>
     NO_FUNCTION,
+
+    /// <summary>
+    /// ゲームセット
+    /// </summary>
+    GAME_SET,
 
     /// <summary>
     /// Length

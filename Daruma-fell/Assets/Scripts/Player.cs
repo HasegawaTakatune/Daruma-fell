@@ -2,13 +2,25 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// プレイヤー
+/// </summary>
 public class Player : MonoBehaviour
 {
-    [SerializeField] private Image selectedIcon;
+    /// <summary>
+    /// 選択中のアイコン
+    /// </summary>
+    [SerializeField] private Image selectedIcon = null;
 
-    [SerializeField] private Image fade;
+    /// <summary>
+    /// フェード
+    /// </summary>
+    [SerializeField] private Image fade = null;
 
-    [SerializeField] private LayerMask mask;
+    /// <summary>
+    /// レイヤーマスク
+    /// </summary>
+    [SerializeField] private LayerMask mask = new LayerMask();
 
     /// <summary>
     /// 垂直ローテーション
@@ -44,7 +56,7 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// 選択アイコンコントロール中
     /// </summary>
     /// <returns></returns>
     public IEnumerator Selected()
@@ -53,6 +65,7 @@ public class Player : MonoBehaviour
         {
             yield return null;
 
+            // 選択項目を注視している間ゲージがたまる
             if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, Mathf.Infinity, mask))
             {
                 selectedIcon.fillAmount += Time.deltaTime;
@@ -63,10 +76,11 @@ public class Player : MonoBehaviour
                 selectedIcon.fillAmount = 0;
             }
         }
+        selectedIcon.fillAmount = 0;
     }
 
     /// <summary>
-    /// 
+    /// フェードイン
     /// </summary>
     /// <returns></returns>
     public IEnumerator FadeIn()
@@ -80,7 +94,7 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// フェードアウト
     /// </summary>
     /// <returns></returns>
     public IEnumerator FadeOut()
